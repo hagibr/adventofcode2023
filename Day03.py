@@ -184,7 +184,7 @@ for line_idx, line in enumerate(schematic):
       else:
         window_end_y = line_idx
       
-      # Searching for a adjacent symbol
+      # Searching for an adjacent symbol
       found_part = False
       part_number = int(line[number_start:number_end+1])
       for y in range(window_start_y, window_end_y+1):
