@@ -13,7 +13,7 @@ for i in range(4):
   count_prod *= count
 print(f"Part One: {count_prod}")
 
-# t₁: time acceleration
+# t₁: time accelerating (acceleration = 1)
 # t₂: time running
 # T: total time
 # v: velocity
@@ -26,7 +26,7 @@ print(f"Part One: {count_prod}")
 # t₁⋅(T-t₁) > D
 # t₁⋅T - t₁² > D
 # t₁² - T⋅t₁ + D < 0
-# It's a "cup" parabola and we want to find out when it's below zero
+# It's a concave upward parabola and we want to find out when it's below zero
 # t₁ = [T ± √(T² - 4⋅D)]/2
 
 # Let's compare with the theory
