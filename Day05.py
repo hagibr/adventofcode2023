@@ -229,25 +229,36 @@ humidity_to_location_input = '''3114211644 984440400 35385940
 4197161772 4281336915 13630381
 3658756438 743483123 240957277'''
 
-seed_to_soil = [[int(i) for i in line.split()] for line in seed_to_soil_input.splitlines()]
+# The input map is composed by [dest_start, origin_start, size]
+# Our line is composed by: [min_origin, max_origin, offset]
+def create_map(map_input):
+  ret_map = []
+  for line in map_input.splitlines():
+    line = line.split()
+    ret_map.append([int(line[1]), int(line[1]) + int(line[2])-1, int(line[0]) - int(line[1])])
+  def map_sorter(m):
+    return m[0]
+  ret_map.sort(key=map_sorter)
+  return ret_map                  
 
-soil_to_fertilizer = [[int(i) for i in line.split()] for line in soil_to_fertilizer_input.splitlines()]
+seed_to_soil = create_map(seed_to_soil_input)
 
-fertilizer_to_water = [[int(i) for i in line.split()] for line in fertilizer_to_water_input.splitlines()]
+soil_to_fertilizer = create_map(soil_to_fertilizer_input)
 
-water_to_light = [[int(i) for i in line.split()] for line in water_to_light_input.splitlines()]
+fertilizer_to_water = create_map(fertilizer_to_water_input)
 
-light_to_temperature = [[int(i) for i in line.split()] for line in light_to_temperature_input.splitlines()]
+water_to_light = create_map(water_to_light_input)
 
-temperature_to_humidity = [[int(i) for i in line.split()] for line in temperature_to_humidity_input.splitlines()]
+light_to_temperature = create_map(light_to_temperature_input)
 
-humidity_to_location = [[int(i) for i in line.split()] for line in humidity_to_location_input.splitlines()]
+temperature_to_humidity = create_map(temperature_to_humidity_input)
+
+humidity_to_location = create_map(humidity_to_location_input)
 
 def mapper(input_item, which_map):
   for map_line in which_map:
-    if( input_item >= map_line[1] and input_item < map_line[1] + map_line[2]):
-      diff = input_item - map_line[1]
-      return map_line[0]+diff
+    if( map_line[0] <= input_item and input_item <= map_line[1]):
+      return input_item + map_line[2]
   return input_item
 
 lowest_location = None
@@ -260,7 +271,7 @@ for s in seeds:
   temperature = mapper(light, light_to_temperature)
   humidity = mapper(temperature, temperature_to_humidity)
   location = mapper(humidity, humidity_to_location)
-  print(f"{s} {soil} {fertilizer} {water} {light} {temperature} {humidity} {location}")
+  # print(f"{s} {soil} {fertilizer} {water} {light} {temperature} {humidity} {location}")
   if lowest_location is None or location < lowest_location:
     lowest_location = location
     
@@ -273,3 +284,16 @@ print(f"Part One: {lowest_location}")
 
 # 285474938: too high, and it's the second limit for the humidity_to_location table
 
+# WIP (don't use yet)
+def composite_map(map1, map2):
+  result_map = []
+  for line1 in map1:
+    min_in_1, max_in_1, off_1 = line1
+    min_out_1 = min_in_1 + off_1
+    max_out_1 = max_in_1 + off_1
+    for line2 in map2:
+      min_in_2, max_in_2, off_2 = line2
+      if( min_in_2 <= min_out_1 and max_out_1 <= max_in_2 ):
+        result_map.append([min_in_1, max_in_1, off_1 + off_2])
+        break
+      
