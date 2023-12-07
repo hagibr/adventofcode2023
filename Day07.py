@@ -1035,7 +1035,7 @@ def sort_score_hand(hand):
     # print(f"{hand}: {count_A} {count_B}")  
     
     # Classifying accordingly to the repetitions
-    
+
     # Five of a kind
     if( count_A == 5 ):
       return 7
@@ -1091,3 +1091,103 @@ for i,sb in enumerate(score_bid):
   total_winning += i*sb[1]
 
 print(f"Part One: {total_winning}")
+
+# Now we are going to implement the Joker Rule
+def sort_score_hand_joker(hand):
+  # Map a card to it's strength
+  card_strength = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'T':10,'J':1,'Q':12,'K':13,'A':14}
+  
+  # Classify the type of a hand
+  def game_type(hand):
+    # First we sort the hand to make it easier to count the repetitions
+    def sort_card(value):
+      return card_strength[value]
+    hand.sort(key=sort_card)
+
+    # Counting the repetitions
+    count_A = 0
+    end_A = False
+    count_B = 0
+    for i in range(1,5):
+      if( hand[i] == hand[i-1] ):
+        if not end_A:
+          if( count_A == 0 ):
+            count_A = 2
+          else:
+            count_A += 1
+        else:
+          if( count_B == 0 ):
+            count_B = 2
+          else:
+            count_B += 1
+      elif( count_A > 0 and not end_A ):
+        end_A = True
+    
+    # print(f"{hand}: {count_A} {count_B}")  
+    
+    # Classifying accordingly to the repetitions
+
+    # Five of a kind
+    if( count_A == 5 ):
+      return 7
+    # Four of a kind
+    elif( count_A == 4 ):
+      return 6
+    # Full House
+    elif( count_A + count_B == 5 ):
+      return 5
+    # Three of a kind
+    elif( count_A == 3 ):
+      return 4
+    # Two pair
+    elif( count_A == 2 and count_B == 2 ):
+      return 3
+    # One pair
+    elif( count_A == 2 ):
+      return 2
+    # High card
+    else:
+      return 1
+
+  # First we must convert the hand as a string to a list
+  hand = list(hand)
+  
+  # Now we calculate the maximum score that we can get if we apply the Joker Rule
+  score = 0
+  for card in card_strength:
+    # Replacing the joker by this card
+    hand_joker = hand[:]
+    for i in range(len(hand)):
+      if( hand_joker[i] == 'J' ):
+        hand_joker[i] = card
+    # The score starts by type when we consider the changed joker
+    joker_score = game_type(hand_joker)
+    # Then we add the card strength in consideration, using the original positions
+    for c in hand:
+      joker_score = joker_score * 14 + card_strength[c]  
+    # Selecting the best score of all
+    score = max(joker_score,score)
+
+  return score
+
+# Starting the new score_bid list with a 0 to make the score counting easier
+score_bid = [[0,0]]
+for line in input.splitlines():
+  hand, bid = line.split()
+  score = sort_score_hand_joker(hand)
+  bid = int(bid)
+  score_bid.append([score,bid])
+
+# Sort the score_bid by score
+def sort_score(sb):
+  return sb[0]
+score_bid.sort(key=sort_score)
+
+# print(score_bid)
+
+# Calculating the total winning
+total_winning = 0
+for i,sb in enumerate(score_bid):
+  total_winning += i*sb[1]
+
+print(f"Part Two: {total_winning}")
