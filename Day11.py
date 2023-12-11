@@ -140,8 +140,8 @@ puzzle_input = '''...........#..........................#.......................
 ...............#............................................#..................................#............................................
 '''
 
-# Set of all galaxies
-galaxy_map = set()
+# List of all galaxies
+galaxy_map = list()
 # Set of all lines that contains a galaxy
 galaxy_lines = set()
 # Set of all columns that contains a galaxy
@@ -150,7 +150,7 @@ galaxy_columns = set()
 for l, line in enumerate(puzzle_input.splitlines()):
   for c, value in enumerate(line):
     if( value == '#' ):
-      galaxy_map.add((l,c))
+      galaxy_map.append((l,c))
       galaxy_lines.add(l)
       galaxy_columns.add(c)
 
@@ -159,41 +159,37 @@ galaxy_pair = dict()
 
 total_distance = 0 # Part One
 total_distance2 = 0 # Part Two
-for galaxy1 in galaxy_map:
-  for galaxy2 in galaxy_map:
-    # Can't be the same galaxy
-    if( galaxy1 != galaxy2 ):
-      # Checking if we have already seen this pair
-      if( (galaxy1, galaxy2) not in galaxy_pair and (galaxy2, galaxy1) not in galaxy_pair ):
-        l1,c1 = galaxy1
-        l2,c2 = galaxy2
-        l1,l2 = min(l1,l2),max(l1,l2)
-        c1,c2 = min(c1,c2),max(c1,c2)
-        distance = 0
-        distance2 = 0
-        # Calculating the line distance
-        if( l1 != l2 ):
-          for l in range(l1+1,l2+1):
-            if( l in galaxy_lines ):
-              distance += 1
-              distance2 += 1
-            else:
-              distance += 2
-              distance2 += 1000000
-        # Calculating the column distance
-        if( c1 != c2 ):
-          for c in range(c1+1,c2+1):
-            if( c in galaxy_columns ):
-              distance += 1
-              distance2 += 1
-            else:
-              distance += 2
-              distance2 += 1000000
-        # Adding the pair to the list
-        galaxy_pair[(galaxy1,galaxy2)] = distance
-        # Accumulating the total distances
-        total_distance += distance
-        total_distance2 += distance2
+for i, galaxy1 in enumerate(galaxy_map):
+  l1,c1 = galaxy1
+  for galaxy2 in galaxy_map[i+1:]:
+    l2,c2 = galaxy2
+    L1,L2 = min(l1,l2),max(l1,l2)
+    C1,C2 = min(c1,c2),max(c1,c2)
+    distance = 0
+    distance2 = 0
+    # Calculating the line distance
+    if( L1 != L2 ):
+      for l in range(L1+1,L2+1):
+        if( l in galaxy_lines ):
+          distance += 1
+          distance2 += 1
+        else:
+          distance += 2
+          distance2 += 1000000
+    # Calculating the column distance
+    if( C1 != C2 ):
+      for c in range(C1+1,C2+1):
+        if( c in galaxy_columns ):
+          distance += 1
+          distance2 += 1
+        else:
+          distance += 2
+          distance2 += 1000000
+    # Adding the pair to the list
+    galaxy_pair[(galaxy1,galaxy2)] = distance
+    # Accumulating the total distances
+    total_distance += distance
+    total_distance2 += distance2
 
 print(f"Part One: {total_distance}")
 
