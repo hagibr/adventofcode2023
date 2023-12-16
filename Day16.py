@@ -133,6 +133,7 @@ for line in puzzle_input.splitlines():
     tile_value = [v,set()]
     tile_row.append(tile_value)
   tile_map.append(tile_row)
+  
 
 # Each beam has 3 properties: [row column direction]
 ROW = 0
@@ -336,16 +337,17 @@ print(f"Part One: {energized}")
 
 max_energized = 0
 
+def reset_map():
+  for tile_row in tile_map:
+    for tile in tile_row:
+      tile[SET] = set()
+
 # Testing several start points
 for r in range(len(tile_map)):
-  # Reset map and beam list
-  tile_map = []
-  for line in puzzle_input.splitlines():
-    tile_row = []
-    for v in line:
-      tile_value = [v,set()]
-      tile_row.append(tile_value)
-    tile_map.append(tile_row)
+  
+  # Reset map
+  reset_map()
+  
   # We start with a single beam at (ROW,COLUMN) = (r,0) going to RIGHT direction
   first_beam = [r,0,RIGHT]
   beam_list = [first_beam]
@@ -354,14 +356,9 @@ for r in range(len(tile_map)):
   process_beams()
   max_energized = max(max_energized, count_energized())
   
-  # Reset map and beam list
-  tile_map = []
-  for line in puzzle_input.splitlines():
-    tile_row = []
-    for v in line:
-      tile_value = [v,set()]
-      tile_row.append(tile_value)
-    tile_map.append(tile_row)
+  # Reset map
+  reset_map()
+  
   # We start with a single beam at (ROW,COLUMN) = (last_row,0) going to LEFT direction
   first_beam = [len(tile_map[0])-1,0,LEFT]
   beam_list = [first_beam]
@@ -370,14 +367,9 @@ for r in range(len(tile_map)):
   max_energized = max(max_energized, count_energized())
   
 for c in range(len(tile_map[0])):
-  # Reset map and beam list
-  tile_map = []
-  for line in puzzle_input.splitlines():
-    tile_row = []
-    for v in line:
-      tile_value = [v,set()]
-      tile_row.append(tile_value)
-    tile_map.append(tile_row)
+  # Reset map
+  reset_map()
+  
   # We start with a single beam at (ROW,COLUMN) = (0,c) going to DOWN direction
   first_beam = [0,c,DOWN]
   beam_list = [first_beam]
@@ -386,14 +378,9 @@ for c in range(len(tile_map[0])):
   process_beams()
   max_energized = max(max_energized, count_energized())
   
-  # Reset map and beam list
-  tile_map = []
-  for line in puzzle_input.splitlines():
-    tile_row = []
-    for v in line:
-      tile_value = [v,set()]
-      tile_row.append(tile_value)
-    tile_map.append(tile_row)
+  # Reset map
+  reset_map()
+  
   # We start with a single beam at (ROW,COLUMN) = (last_row,c) going to UP direction
   first_beam = [len(tile_map)-1,c,UP]
   beam_list = [first_beam]
@@ -403,4 +390,3 @@ for c in range(len(tile_map[0])):
   max_energized = max(max_energized, count_energized())
   
 print(f"Part Two: {max_energized}")
-# 11439: Too High
