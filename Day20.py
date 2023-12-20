@@ -58,18 +58,12 @@ broadcaster -> kb, vq, ss, qg
 %zm -> xr, jh
 '''
 
+from enum import Enum
 # Each component has this structure:
 # [type inputs outputs state pulses]
-BROADCASTER = 0
-FLIPFLOP = 1
-CONJUNCTION = 2
-UNTYPED = 3
+PartType = Enum('PartType', ['BROADCASTER', 'FLIPFLOP', 'CONJUNCTION', 'UNTYPED'])
 
-TYPE = 0
-INPUTS = 1
-OUTPUTS = 2
-STATE = 3
-PULSES = 4
+PartIndex = Enum('PartIndex', ['TYPE','INPUTS','OUTPUTS','STATE','PULSES'], start=0)
 
 module = dict()
 
@@ -78,25 +72,25 @@ for line in puzzle_input.splitlines():
   name = parts[0]
   outputs = parts[1:]
   if( name[0] == '%' ):
-    ctype = FLIPFLOP
+    ctype = PartType.FLIPFLOP
     name = name[1:]
   elif( name[0] == '&' ):
-    ctype = CONJUNCTION
+    ctype = PartType.CONJUNCTION
     name = name[1:]
   else:
-    ctype = BROADCASTER
+    ctype = PartType.BROADCASTER
   
   if name not in module:
-    module[name] = [UNTYPED,[],[],0,[]]
+    module[name] = [PartType.UNTYPED,[],[],0,[]]
   
-  module[name][TYPE] = ctype
-  module[name][OUTPUTS] = outputs
+  module[name][PartIndex.TYPE.value] = ctype
+  module[name][PartIndex.OUTPUTS.value] = outputs
   
   for p in outputs:
     if p not in module:
-      module[p] = [UNTYPED,[name],[],0,[]]
+      module[p] = [PartType.UNTYPED,[name],[],0,[]]
     else:
-      module[p][INPUTS].append(name)
+      module[p][PartIndex.INPUTS.value].append(name)
 
 for p in module:
   print(p, module[p])
